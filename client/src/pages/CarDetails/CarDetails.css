@@ -1,0 +1,77 @@
+/* src/pages/CarDetails.css */
+.car-details {
+    padding: 20px;
+  }
+  
+  .car-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .car-details-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  .car-details-actions button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .delete-btn-car {
+    background-color: #FF4C4C !important;
+  }
+  
+  .car-details-actions button:hover {
+    opacity: 0.8;
+  }
+  
+  .car-details-images {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .car-details-images img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .car-details-info {
+    font-size: 1.2rem;
+  }
+  
+  .car-details-info p {
+    margin: 10px 0;
+  }
+  
+  .car-details-tags {
+    margin-top: 20px;
+  }
+  
+  .tag {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  
+  .tag:hover {
+    background-color: #45a049;
+  }
+.delete-btn{
+    background-color: #6c1a1a;
+}
