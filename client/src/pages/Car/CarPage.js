@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './CarPage.css';
 import CarCard from '../../components/CarCard/CarCard';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const CarPage = () => {
   const [carData, setCarData] = useState([])
@@ -14,6 +15,7 @@ const CarPage = () => {
   },[])
   return (
     <div className="car-page">
+      <Link to="/mycars/create-car" className="add-car-btn">Add Car</Link>
       <h1 className="car-page-title">Car Listings</h1>
       <div className="car-cards-container">
         {carData.map((car) => (

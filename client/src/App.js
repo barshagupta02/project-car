@@ -7,6 +7,7 @@ import CarPage from './pages/Car/CarPage';
 import CarDetails from './pages/CarDetails/CarDetails';
 import HomePage from './pages/Homepage/HomePage';
 import ProtectedRoute from './utils/ProtectedRoute';
+import CreateCar from './pages/CreateCar/CreateCar';
 const App = () => {
   return (
     <Router>
@@ -18,6 +19,7 @@ const App = () => {
 
         <Route path="/mycars" element={<ProtectedRoute element={<CarPage />} />} />
         <Route path="/mycars/:id" element={<ProtectedRoute element={<CarDetails />} />} />
+        <Route path="/mycars/create-car" element={<ProtectedRoute element={<CreateCar />} />} />
       </Routes>
     </Router>
   );

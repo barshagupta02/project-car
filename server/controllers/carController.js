@@ -167,7 +167,7 @@ exports.getCar = async (req, res) => {
 exports.updateCar = async (req, res) => {
     try {
         const car = await Car.findOneAndUpdate(
-            { _id: req.params.id, user: req.user._id },
+            { _id: req.params.id, owner: req.user._id },
             req.body,
             { new: true, runValidators: true }
         );
@@ -195,7 +195,7 @@ exports.updateCar = async (req, res) => {
 exports.deleteCar = async (req, res) => {
     try {
         // Ensure the logged-in user owns the car
-        const car = await Car.findOneAndDelete({ _id: req.params.id, user: req.user._id });
+        const car = await Car.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
 
         if (!car) {
             return res.status(404).json({

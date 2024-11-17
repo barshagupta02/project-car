@@ -15,8 +15,12 @@ const CarDetails = () => {
   };
 
   const handleDelete = () => {
-    // Logic for deleting the car (you can implement API calls here)
-    alert(`Car ${car.name} has been deleted`);
+    //add confirmation dialog
+    axios.delete(`http://localhost:3001/cars/${id}`, { "headers": { "authorization": localStorage.getItem('token') } })
+      .then(response => {
+        navigate('/mycars')
+      })
+      .catch(error => console.log(error))
   };
 
   const [car, setCar] = useState(null)
@@ -38,7 +42,7 @@ const CarDetails = () => {
             <h1 className="car-details-title">{car.name}</h1>
             <div className="car-details-actions">
               <button className="edit-btn" onClick={handleEdit}>Edit</button>
-              <button className="delete-btn-car" onClick={handleDelete}>Delete</button>
+              <button className="delete-btn-car" onClick={() => handleDelete(id)}>Delete</button>
             </div>
           </div>
           <div className="car-details-content">
