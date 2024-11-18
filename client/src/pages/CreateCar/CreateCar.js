@@ -5,6 +5,8 @@ import './CreateCar.css';
 
 const CreateCar = () => {
   const navigate = useNavigate();
+  const MAX_IMAGES = 10; // Maximum number of images allowed
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -22,32 +24,72 @@ const CreateCar = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  // Cloudinary configuration
+  const CLOUD_NAME = "da8v3uc6w";
+  const UPLOAD_PRESET = "car-app";
+
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    
+    // Check if adding new files would exceed the limit
+    if (formData.images.length + files.length > MAX_IMAGES) {
+      setError(`You can only upload up to ${MAX_IMAGES} images. You currently have ${formData.images.length} images.`);
+      return;
+    }
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+
+        const response = await axios.post(
+          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+          formData
+        );
+
+        return response.data.secure_url;
+      });
+
+      const imageUrls = await Promise.all(uploadPromises);
+
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...imageUrls]
+      }));
+    } catch (err) {
+      setError('Failed to upload images. Please try again.');
+      console.error('Upload error:', err);
+    } finally {
+      setUploading(false);
+      // Reset the file input
+      e.target.value = '';
+    }
+  };
+
+  const removeImage = (indexToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, index) => index !== indexToRemove)
+    }));
+    setError(''); // Clear any existing errors when removing images
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Check if it's a field in the tags object
     if (name.startsWith('tags.')) {
-      const tagName = name.split('.')[1]; // Get the tag field name (e.g., 'company', 'fuel_type')
+      const tagName = name.split('.')[1];
       setFormData({
         ...formData,
         tags: {
           ...formData.tags,
           [tagName]: value
-        }
-      });
-    } else if (name === 'images') {
-      setFormData({
-        ...formData,
-        [name]: Array.from(e.target.files)
-      });
-    } else if (name === 'tags.additional_tags') {
-      // Handle additional tags as a comma-separated string
-      setFormData({
-        ...formData,
-        tags: {
-          ...formData.tags,
-          additional_tags: value
         }
       });
     } else {
@@ -58,7 +100,7 @@ const CreateCar = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.name || !formData.price || !formData.year || !formData.images.length) {
@@ -69,47 +111,40 @@ const CreateCar = () => {
     setError('');
     setSuccess('');
 
-    const formDataToSubmit = new FormData();
-    formDataToSubmit.append('name', formData.name);
-    formDataToSubmit.append('description', formData.description);
-    formDataToSubmit.append('price', formData.price);
-    formDataToSubmit.append('year', formData.year);
+    try {
+      const response = await axios.post('http://localhost:3001/cars', 
+        {
+          ...formData,
+          images: formData.images
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
 
-    formData.images.forEach((image) => {
-      formDataToSubmit.append('images', "dasjhfsja.jpg"); // Append image files
-    });
-
-    // Append tags
-    Object.keys(formData.tags).forEach((key) => {
-      formDataToSubmit.append(`tags.${key}`, formData.tags[key]);
-    });
-
-    axios
-      .post('http://localhost:3001/cars', formDataToSubmit, {
-        headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-      })
-      .then((response) => {
-        setSuccess('Car created successfully');
-        setFormData({
-          name: '',
-          description: '',
-          images: [],
-          tags: {
-            car_type: '',
-            company: '',
-            dealer: '',
-            fuel_type: '',
-            transmission: '',
-            additional_tags: ''
-          },
-          price: '',
-          year: ''
-        });
-        navigate('/mycars'); // Redirect after successful creation
-      })
-      .catch((error) => {
-        setError(error.response?.data?.message || 'Something went wrong');
+      setSuccess('Car created successfully');
+      setFormData({
+        name: '',
+        description: '',
+        images: [],
+        tags: {
+          car_type: '',
+          company: '',
+          dealer: '',
+          fuel_type: '',
+          transmission: '',
+          additional_tags: ''
+        },
+        price: '',
+        year: ''
       });
+      navigate('/mycars');
+    } catch (error) {
+      setError(error.response?.data?.message || 'Something went wrong');
+    }
   };
 
   return (
@@ -143,16 +178,45 @@ const CreateCar = () => {
             />
           </div>
           <div className="input-group">
-            <label htmlFor="images">Images</label>
+            <label htmlFor="images">
+              Images ({formData.images.length}/{MAX_IMAGES})
+            </label>
             <input
               type="file"
               id="images"
               name="images"
               multiple
-              onChange={handleChange}
-              required
+              onChange={handleImageUpload}
+              accept="image/*"
+              disabled={uploading || formData.images.length >= MAX_IMAGES}
+              required={formData.images.length === 0}
+              className="file-input"
             />
+            {formData.images.length >= MAX_IMAGES && (
+              <p className="limit-message">Maximum number of images reached</p>
+            )}
+            {uploading && (
+              <div className="upload-status">
+                <div className="spinner"></div>
+                <span>Uploading images...</span>
+              </div>
+            )}
+            <div className="image-preview">
+              {formData.images.map((url, index) => (
+                <div key={index} className="image-preview-item">
+                  <img src={url} alt={`Car preview ${index + 1}`} />
+                  <button 
+                    type="button" 
+                    onClick={() => removeImage(index)}
+                    className="remove-image-btn"
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
+          {/* Rest of the form fields remain the same */}
           <div className="input-group">
             <label htmlFor="price">Price</label>
             <input
@@ -232,7 +296,13 @@ const CreateCar = () => {
               onChange={handleChange}
             />
           </div>
-          <button type="submit" className="create-car-btn">Create Car</button>
+          <button 
+            type="submit" 
+            className="create-car-btn"
+            disabled={uploading}
+          >
+            Create Car
+          </button>
         </form>
       </div>
     </div>

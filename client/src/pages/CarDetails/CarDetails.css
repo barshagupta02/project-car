@@ -36,8 +36,9 @@
   
   .car-details-images {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     margin-bottom: 20px;
+    overflow-x: scroll;
   }
   
   .car-details-images img {
