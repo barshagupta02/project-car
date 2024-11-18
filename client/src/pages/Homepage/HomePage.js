@@ -6,7 +6,6 @@ import ImageUpload from '../../components/ImageUpload/ImageUpload';
 const HomePage = () => {
   return (
     <div className="home-page">
-      <ImageUpload />
       <h1 className="home-title">My Car Portfolio</h1>
     </div>
   );

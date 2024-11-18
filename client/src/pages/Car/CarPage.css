@@ -1,7 +1,7 @@
-/* src/pages/CarPage.css */
 .car-page {
     padding: 50px 20px;
     text-align: center;
+    position: relative;
 }
 
 .car-page-title {
@@ -14,4 +14,23 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+}
+
+.add-car-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-car-btn:hover {
+    background-color: #0056b3;
 }

@@ -52,24 +52,24 @@ const CarDetails = () => {
               ))}
             </div>
             <div className="car-details-info">
-  <p><strong>Description:</strong> {car.description}</p>
-  <p><strong>Price:</strong> ${car.price}</p>
-  <p><strong>Year:</strong> {car.year}</p>
-  <div className="car-details-tags">
-    {Object.entries(car.tags).map(([tagName, tagValue], index) => {
-      if (Array.isArray(tagValue)) {
-        // Handle array values (e.g., additional tags)
-        return tagValue.map((value, i) => (
-          <span key={`${index}-${i}`} className="tag">{`${tagName}: ${value}`}</span>
-        ));
-      } else if (tagValue) {
-        // Handle single values
-        return <span key={index} className="tag">{`${tagName}: ${tagValue}`}</span>;
-      }
-      return null; // Skip if tagValue is null/undefined
-    })}
-  </div>
-</div>
+              <p><strong>Description:</strong> {car.description}</p>
+              <p><strong>Price:</strong> ${car.price}</p>
+              <p><strong>Year:</strong> {car.year}</p>
+              <div className="car-details-tags">
+                {Object.entries(car.tags).map(([tagName, tagValue], index) => {
+                  if (Array.isArray(tagValue)) {
+                    // Handle array values (e.g., additional tags)
+                    return tagValue.map((value, i) => (
+                      <span key={`${index}-${i}`} className="tag">{`${tagName}: ${value}`}</span>
+                    ));
+                  } else if (tagValue) {
+                    // Handle single values
+                    return <span key={index} className="tag">{`${tagName}: ${tagValue}`}</span>;
+                  }
+                  return null; // Skip if tagValue is null/undefined
+                })}
+              </div>
+            </div>
 
           </div>
         </div>
